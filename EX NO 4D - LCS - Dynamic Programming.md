@@ -1,22 +1,54 @@
 
-# EX 4C Coin Change Problem - Dynamic Programming.
+# EX 4D Longest Common SubSequence - Dynamic Programming.
 ## DATE: 15/05/2026
 ## AIM:
 To write a Java program to for given constraints.
-You are given an integer array coins representing coins of different denominations and an integer amount representing a total amount of money.
+Given two strings text1 and text2, return the length of their longest common subsequence. If there is no common subsequence, return 0.
+A subsequence of a string is a new string generated from the original string with some characters (can be none) deleted without changing the relative order of the remaining characters.
 
-Return the fewest number of coins that you need to make up that amount. If that amount of money cannot be made up by any combination of the coins, return -1.
+For example, "ace" is a subsequence of "abcde".
+A common subsequence of two strings is a subsequence that is common to both strings.
 
-You may assume that you have an infinite number of each kind of coin.
+Input: text1 = "abcde", text2 = "ace" 
+Output: 3  
+Explanation: The longest common subsequence is "ace" and its length is 3.
+Constraints:
+
+1 <= text1.length, text2.length <= 1000
+text1 and text2 consist of only lowercase English characters.
 
 ## Algorithm
+✅ **Procedure:**
 
-1. Read the coin denominations and target amount as input.
-2. Initialize a `dp` array of size `amount + 1` with a large value (`amount + 1`), and set `dp[0] = 0`.
-3. For each amount `i` from `1` to `amount`, iterate through all coin values.
-4. If `i - coin >= 0`, update `dp[i] = min(dp[i], dp[i - coin] + 1)` to track the minimum coins needed.
-5. After filling the `dp` array, print `dp[amount]` if it’s valid; otherwise, print `-1` if the amount cannot be formed.
+1. **Input:**
 
+   * Read two strings, `text1` and `text2`, from the user.
+
+2. **Initialization:**
+
+   * Let `m` = length of `text1` and `n` = length of `text2`.
+   * Create a 2D array `dp[m+1][n+1]`, where `dp[i][j]` stores the length of the longest common subsequence (LCS) between `text1[0..i-1]` and `text2[0..j-1]`.
+
+3. **Filling the DP Table:**
+
+   * For each `i` from `1` to `m`:
+
+     * For each `j` from `1` to `n`:
+
+       * If characters match (`text1.charAt(i-1) == text2.charAt(j-1)`):
+         → `dp[i][j] = 1 + dp[i-1][j-1]`
+       * Else:
+         → `dp[i][j] = max(dp[i-1][j], dp[i][j-1])`
+
+4. **Result:**
+
+   * The value `dp[m][n]` gives the **length of the longest common subsequence**.
+
+5. **Output:**
+
+   * Print the result:
+     `"Length of Longest Common Subsequence: " + dp[m][n]`
+  
 
 ## Program:
 ```
@@ -25,52 +57,48 @@ Register Number:  212223040191
 ```
 
 ```
-import java.util.*;
+import java.util.Scanner;
 
 public class Solution {
-    public int coinChange(int[] coins, int amount) {
-        int max = amount + 1;
-        int[] dp = new int[amount + 1];
-        Arrays.fill(dp, max);  // Initialize with a value greater than any possible answer
-        dp[0] = 0;  // Base case: 0 coins needed to make amount 0
 
-        for (int i = 1; i <= amount; i++) {
-            for (int coin : coins) {
-                if (i - coin >= 0) {
-                    dp[i] = Math.min(dp[i], dp[i - coin] + 1);
+    public int longestCommonSubsequence(String text1, String text2) {
+        int m = text1.length();
+        int n = text2.length();
+
+        int[][] dp = new int[m + 1][n + 1]; // dp[i][j] = LCS of text1[0..i-1] & text2[0..j-1]
+
+        // Fill dp table
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <= n; j++) {
+                if (text1.charAt(i - 1) == text2.charAt(j - 1)) {
+                    dp[i][j] = 1 + dp[i - 1][j - 1];
+                } else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
                 }
             }
         }
 
-        return dp[amount] > amount ? -1 : dp[amount];
+        return dp[m][n];
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        Solution solution = new Solution();
+        Scanner sc = new Scanner(System.in);
+        Solution sol = new Solution();
 
-        String coinsLine = scanner.nextLine(); 
-        String amountLine = scanner.nextLine();
+        String text1 = sc.nextLine().replaceAll("\"", "");
+        String text2 = sc.nextLine().replaceAll("\"", "");
 
-        coinsLine = coinsLine.replaceAll("[^0-9,]", ""); 
-        String[] coinsStr = coinsLine.split(",");
-        int[] coins = new int[coinsStr.length];
-        for (int i = 0; i < coinsStr.length; i++) {
-            coins[i] = Integer.parseInt(coinsStr[i]);
-        }
+        int lcsLength = sol.longestCommonSubsequence(text1, text2);
+        System.out.println("Length of Longest Common Subsequence: " + lcsLength);
 
-        int amount = Integer.parseInt(amountLine.replaceAll("[^0-9]", ""));
-        int result = solution.coinChange(coins, amount);
-        System.out.println(result);
-
-        scanner.close();
+        sc.close();
     }
 }
 
 ```
 
 ## Output:
-<img width="381" height="233" alt="image" src="https://github.com/user-attachments/assets/5e89c89e-b032-4cbf-be3d-96755cc94f62" />
+<img width="833" height="255" alt="image" src="https://github.com/user-attachments/assets/f08d14f5-2d4e-454b-a4c0-ecbe868c1ad3" />
 
 
 
